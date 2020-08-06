@@ -5,6 +5,18 @@ import pandas as pd
 
 from scipy import signal
 
+def make_relatinoal_data_struture():
+    path_save='/mnt/368AE7F88AE7B313/Files_Programming/Git/ads_covid-19-sem/data/processed/COVID_relational_confirmed.csv'
+    data_path = '/mnt/368AE7F88AE7B313/Files_Programming/Git/ads_covid-19-sem/data/raw/COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+    pd_raw = pd.read_csv(data_path).copy()
+    
+    pd_data_base = pd_raw.rename(columns={'Country/Region':'country', 'Province/State':'state'})
+    pd_data_base = pd_data_base.drop(['Lat','Long'], axis=1)
+    
+    test_pd = pd_data_base.set_index(['state', 'country']).T
+    pd_relational_model =test_pd.stack(level=[0,1]).reset_index().rename(columns=                                             {'level_0':'date',0:'confirmed'})
+    pd_relational_model['date']=pd_relational_model.date.astype('datetime64[ns]')
+    pd_relational_model.to_csv(path_save, sep=';')
 
 def get_doubling_time_via_regression(in_array):
     ''' Use a linear regression to approximate the doubling rate
@@ -129,15 +141,13 @@ def calc_doubling_rate(df_input,filter_on='confirmed'):
 
 
 if __name__ == '__main__':
-    test_data_reg=np.array([2,4,6])
-    result=get_doubling_time_via_regression(test_data_reg)
-    print('the test slope is: '+str(result))
-    
-    pd_JH_data=pd.read_csv('data/processed/COVID_relational_confirmed.csv',sep=';',parse_dates=[0])
+    path = '/mnt/368AE7F88AE7B313/Files_Programming/Git/ads_covid-19-sem/data/processed/COVID_relational_confirmed.csv'
+    make_relatinoal_data_struture()
+    pd_JH_data=pd.read_csv(path,sep=';',parse_dates=[0])
     pd_JH_data=pd_JH_data.sort_values('date',ascending=True).reset_index().copy()
 
     pd_result_larg=calc_filtered_data(pd_JH_data)
     pd_result_larg=calc_doubling_rate(pd_result_larg)
     pd_result_larg=calc_doubling_rate(pd_result_larg,'confirmed_filtered')
-    print(pd_result_larg.head())
+    
 
