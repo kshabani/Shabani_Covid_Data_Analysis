@@ -5,8 +5,8 @@ from src.visualization import dashboard_V2
 
 if __name__ == "__main__":
 
-    #get_data.main()
-    #process_JH_data.main()
+    get_data.main()
+    process_JH_data.main()
     build_features.main()
     dashboard_V2.main()
 
