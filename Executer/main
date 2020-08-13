@@ -1,0 +1,12 @@
+from src.data import get_data,process_JH_data
+from src.features import build_features
+from src.visualization import dashboard_V2
+
+
+if __name__ == "__main__":
+
+    #get_data.main()
+    #process_JH_data.main()
+    build_features.main()
+    dashboard_V2.main()
+
